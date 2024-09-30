@@ -90,11 +90,11 @@ class Logger:
                 else:
                     parsed_answer += bg_color + message.split("$")[i] + Colors.END
             if solution:
-                print(f"{color}[{time}] - <<{title}>>{Colors.END}  : {parsed_answer}. {Colors.BOLD}Potential Solution:{Colors.END} {Colors.CYAN}{solution}{Colors.END}")
+                print(f"{color}[{time}] - <<{title}>>{Colors.END}  : {parsed_answer}. {Colors.BOLD}\nPotential Solution:{Colors.END} {Colors.CYAN}{solution}{Colors.END}")
             else:
                 print(f"{color}[{time}] - <<{title}>>{Colors.END}  : {parsed_answer}")
         else:
             if solution:
-                print(f"[{time}] - <<{title}>>  : {message}. Potential Solution: {solution}")
+                print(f"[{time}] - <<{title}>>  : {message}. \nPotential Solution: {solution}")
             else:
                 print(f"[{time}] - <<{title}>>  : {message}")
