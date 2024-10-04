@@ -32,10 +32,19 @@ class Colors:
     END = "\033[0m"
 
 class Logger:
-    def __init__(self, colorize=True) -> None:
+    def __init__(self, colorize=True, write_to_logfile=True, log_filename="Logger.log") -> None:
         self.COLORIZE = colorize
         self.TIME_FORMAT = "%d.%m.%Y-%H:%M:%S"
+        self.log_filename = log_filename
+        self.write_to_logfile = write_to_logfile
         os.system("") # Нужно для отображение цвета в консоли Windows
+        if self.write_to_logfile and not os.path.isfile(self.log_filename):
+            with open(self.log_filename, "w", encoding="utf-8") as file:
+                file.write("")
+
+    def write_to_file(self, text):
+        with open(self.log_filename, "a", encoding="utf-8") as file:
+            file.write(text + "\n")
 
     def log_info(self, message, title="Info", color=Colors.BLUE, bg_color=Colors.BLUE):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
@@ -50,6 +59,9 @@ class Logger:
         else:
             print(f"[{time}] - <<{title}>>   : {message}")
 
+        if self.write_to_logfile:
+            self.write_to_file(f"[{time}] - <<{title}>>   : {parsed_answer}")
+
     def log_success(self, message, title="Success", color=Colors.GREEN, bg_color=Colors.GREEN):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
         if self.COLORIZE:
@@ -62,6 +74,9 @@ class Logger:
             print(f"{color}[{time}] - <<{title}>>{Colors.END}: {parsed_answer}")
         else:
             print(f"[{time}] - <<{title}>>: {message}")
+        
+        if self.write_to_logfile:
+            self.write_to_file(f"[{time}] - <<{title}>>: {message}")
     
     def log_warning(self, message, title="Warning", color=Colors.YELLOW, bg_color=Colors.YELLOW):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
@@ -75,6 +90,9 @@ class Logger:
             print(f"{color}[{time}] - <<{title}>>{Colors.END}: {parsed_answer}")
         else:
             print(f"[{time}] - <<{title}>>: {message}")
+        
+        if self.write_to_logfile:
+            self.write_to_file(f"[{time}] - <<{title}>>: {message}")
     
     def log_error(self, message="", error=None, title="Error", color=Colors.RED, bg_color=Colors.RED, solution=None):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
@@ -98,3 +116,9 @@ class Logger:
                 print(f"[{time}] - <<{title}>>  : {message}. \nPotential Solution: {solution}")
             else:
                 print(f"[{time}] - <<{title}>>  : {message}")
+        
+        if self.write_to_logfile:
+            if solution:
+                self.write_to_file(f"[{time}] - <<{title}>>  : {message}. Potential Solution: {solution}")
+            else:
+                self.write_to_file(f"[{time}] - <<{title}>>  : {message}")
