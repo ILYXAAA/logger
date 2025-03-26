@@ -60,7 +60,7 @@ class Logger:
             print(f"[{time}] - <<{title}>>   : {message}")
 
         if self.write_to_logfile:
-            self.write_to_file(f"[{time}] - <<{title}>>   : {parsed_answer}")
+            self.write_to_file(f"[{time}] - <<{title}>>   : {message}")
 
     def log_success(self, message, title="Success", color=Colors.GREEN, bg_color=Colors.GREEN):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
