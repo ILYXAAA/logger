@@ -9,7 +9,8 @@ pip install ilyxalogger
 ```
 
 ## Quick Guide ##
-```python 
+```python
+from ilyxalogger import Logger
 Logger = Logger(colorize=True, write_to_logfile=True, log_filename="Logger.log")
 
 Logger.log_info(message="Info")
