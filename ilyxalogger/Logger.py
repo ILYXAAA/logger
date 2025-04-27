@@ -46,30 +46,14 @@ class Logger:
         with open(self.log_filename, "a", encoding="utf-8") as file:
             file.write(text + "\n")
 
-    def log_info(self, message, title="Info", color=Colors.BLUE, bg_color=Colors.BLUE, TextOnly=False):
+    def log_info(self, message, title="Info", color=Colors.BLUE, bg_color=Colors.BLUE, TextOnly=False, WriteToFileOnly=False):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
-        if self.COLORIZE:
-            parsed_answer = ""
-            for i in range (len(message.split("$"))):
-                if i % 2 == 0:
-                    parsed_answer += message.split("$")[i]
-                else:
-                    parsed_answer += bg_color + message.split("$")[i] + Colors.END
-            if TextOnly:
-                print(f"{parsed_answer}")
-            else:
-                print(f"{color}[{time}] - <<{title}>>{Colors.END}   : {parsed_answer}")
-        else:
-            if TextOnly:
-                print(f"{message}")
-            else:
-                print(f"[{time}] - <<{title}>>   : {message}")
-
         if self.write_to_logfile:
-            self.write_to_file(f"[{time}] - <<{title}>>   : {message}")
+            self.write_to_file(f"[{time}] - <<{title}>>: {message}")
 
-    def log_success(self, message, title="Success", color=Colors.GREEN, bg_color=Colors.GREEN, TextOnly=False):
-        time = datetime.datetime.now().strftime(self.TIME_FORMAT)
+        if WriteToFileOnly:
+            return 
+        
         if self.COLORIZE:
             parsed_answer = ""
             for i in range (len(message.split("$"))):
@@ -86,12 +70,15 @@ class Logger:
                 print(f"{message}")
             else:
                 print(f"[{time}] - <<{title}>>: {message}")
-        
+
+    def log_success(self, message, title="Success", color=Colors.GREEN, bg_color=Colors.GREEN, TextOnly=False, WriteToFileOnly=False):
+        time = datetime.datetime.now().strftime(self.TIME_FORMAT)
         if self.write_to_logfile:
             self.write_to_file(f"[{time}] - <<{title}>>: {message}")
-    
-    def log_warning(self, message, title="Warning", color=Colors.YELLOW, bg_color=Colors.YELLOW, TextOnly=False):
-        time = datetime.datetime.now().strftime(self.TIME_FORMAT)
+        
+        if WriteToFileOnly:
+            return 
+        
         if self.COLORIZE:
             parsed_answer = ""
             for i in range (len(message.split("$"))):
@@ -108,12 +95,44 @@ class Logger:
                 print(f"{message}")
             else:
                 print(f"[{time}] - <<{title}>>: {message}")
-        
+
+    def log_warning(self, message, title="Warning", color=Colors.YELLOW, bg_color=Colors.YELLOW, TextOnly=False, WriteToFileOnly=False):
+        time = datetime.datetime.now().strftime(self.TIME_FORMAT)
         if self.write_to_logfile:
             self.write_to_file(f"[{time}] - <<{title}>>: {message}")
+
+        if WriteToFileOnly:
+            return 
+        
+        if self.COLORIZE:
+            parsed_answer = ""
+            for i in range (len(message.split("$"))):
+                if i % 2 == 0:
+                    parsed_answer += message.split("$")[i]
+                else:
+                    parsed_answer += bg_color + message.split("$")[i] + Colors.END
+            if TextOnly:
+                print(f"{parsed_answer}")
+            else:
+                print(f"{color}[{time}] - <<{title}>>{Colors.END}: {parsed_answer}")
+        else:
+            if TextOnly:
+                print(f"{message}")
+            else:
+                print(f"[{time}] - <<{title}>>: {message}")
     
-    def log_error(self, message="", error=None, title="Error", color=Colors.RED, bg_color=Colors.RED, solution=None, TextOnly=False):
+    def log_error(self, message="", error=None, title="Error", color=Colors.RED, bg_color=Colors.RED, solution=None, TextOnly=False, WriteToFileOnly=False):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
+
+        if self.write_to_logfile:
+            if solution:
+                self.write_to_file(f"[{time}] - <<{title}>>: {message}. Potential Solution: {solution}")
+            else:
+                self.write_to_file(f"[{time}] - <<{title}>>: {message}")
+                
+        if WriteToFileOnly:
+            return 
+    
         if error and title == "Error":
             title = error.__class__.__name__
             if not message:
@@ -129,26 +148,20 @@ class Logger:
                 if TextOnly:
                     print(f"{parsed_answer}. {Colors.BOLD}\nPotential Solution:{Colors.END} {Colors.CYAN}{solution}{Colors.END}")
                 else:
-                    print(f"{color}[{time}] - <<{title}>>{Colors.END}  : {parsed_answer}. {Colors.BOLD}\nPotential Solution:{Colors.END} {Colors.CYAN}{solution}{Colors.END}")
+                    print(f"{color}[{time}] - <<{title}>>{Colors.END}: {parsed_answer}. {Colors.BOLD}\nPotential Solution:{Colors.END} {Colors.CYAN}{solution}{Colors.END}")
             else:
                 if TextOnly:
                     print(f"{parsed_answer}")
                 else:
-                    print(f"{color}[{time}] - <<{title}>>{Colors.END}  : {parsed_answer}")
+                    print(f"{color}[{time}] - <<{title}>>{Colors.END}: {parsed_answer}")
         else:
             if solution:
                 if TextOnly:
-                    print(f"[{time}] - <<{title}>>  : {message}. \nPotential Solution: {solution}")
+                    print(f"[{time}] - <<{title}>>: {message}. \nPotential Solution: {solution}")
                 else:
                     print(f"{message}. \nPotential Solution: {solution}")
             else:
                 if TextOnly:
                     print(f"{message}")
                 else:
-                    print(f"[{time}] - <<{title}>>  : {message}")
-        
-        if self.write_to_logfile:
-            if solution:
-                self.write_to_file(f"[{time}] - <<{title}>>  : {message}. Potential Solution: {solution}")
-            else:
-                self.write_to_file(f"[{time}] - <<{title}>>  : {message}")
+                    print(f"[{time}] - <<{title}>>: {message}")
