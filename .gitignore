@@ -3,3 +3,5 @@ build/
 *.egg-info/
 PKG-INFO
 tests.py
+tests2.py
+Lib update guide.txt

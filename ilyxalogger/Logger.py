@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 
 class Colors:
     BLACK = "\033[0;30m"
@@ -41,12 +42,28 @@ class Logger:
         if self.write_to_logfile and not os.path.isfile(self.log_filename):
             with open(self.log_filename, "w", encoding="utf-8") as file:
                 file.write("")
+    
+    def sanitize_text(self, value: str) -> str:
+        if value:
+            value = re.sub(r'[\r\n\t]', ' ', value)
+            value = re.sub(r'\x1b\[[0-9;]*m', '', value)
+            return value.strip()
+        else:
+            return None
+
+    def sanitize_color(self, value: str) -> str:
+        if value:
+            value = re.sub(r'[\r\n\t]', ' ', value)
+            return value.strip()
+        else:
+            return None
 
     def write_to_file(self, text):
         with open(self.log_filename, "a", encoding="utf-8") as file:
             file.write(text + "\n")
 
     def log_info(self, message, title="Info", color=Colors.BLUE, bg_color=Colors.BLUE, TextOnly=False, WriteToFileOnly=False):
+        message, title, color, bg_color = self.sanitize_text(message), self.sanitize_text(title), self.sanitize_color(color), self.sanitize_color(bg_color)
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
         if self.write_to_logfile:
             self.write_to_file(f"[{time}] - <<{title}>>: {message}")
@@ -72,6 +89,7 @@ class Logger:
                 print(f"[{time}] - <<{title}>>: {message}")
 
     def log_success(self, message, title="Success", color=Colors.GREEN, bg_color=Colors.GREEN, TextOnly=False, WriteToFileOnly=False):
+        message, title, color, bg_color = self.sanitize_text(message), self.sanitize_text(title), self.sanitize_color(color), self.sanitize_color(bg_color)
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
         if self.write_to_logfile:
             self.write_to_file(f"[{time}] - <<{title}>>: {message}")
@@ -97,6 +115,7 @@ class Logger:
                 print(f"[{time}] - <<{title}>>: {message}")
 
     def log_warning(self, message, title="Warning", color=Colors.YELLOW, bg_color=Colors.YELLOW, TextOnly=False, WriteToFileOnly=False):
+        message, title, color, bg_color = self.sanitize_text(message), self.sanitize_text(title), self.sanitize_color(color), self.sanitize_color(bg_color)
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
         if self.write_to_logfile:
             self.write_to_file(f"[{time}] - <<{title}>>: {message}")
@@ -123,7 +142,7 @@ class Logger:
     
     def log_error(self, message="", error=None, title="Error", color=Colors.RED, bg_color=Colors.RED, solution=None, TextOnly=False, WriteToFileOnly=False):
         time = datetime.datetime.now().strftime(self.TIME_FORMAT)
-
+        message, title, solution, color, bg_color = self.sanitize_text(message), self.sanitize_text(title), self.sanitize_text(solution), self.sanitize_color(color), self.sanitize_color(bg_color)
         if self.write_to_logfile:
             if solution:
                 self.write_to_file(f"[{time}] - <<{title}>>: {message}. Potential Solution: {solution}")
