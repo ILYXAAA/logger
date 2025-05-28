@@ -1,6 +1,9 @@
 import datetime
+from datetime import timedelta
 import os
 import re
+import threading
+import time
 
 class Colors:
     BLACK = "\033[0;30m"
@@ -184,3 +187,24 @@ class Logger:
                     print(f"{message}")
                 else:
                     print(f"[{time}] - <<{title}>>: {message}")
+
+
+class StatusLogger(Logger):
+    def __init__(self, status_interval_seconds=60, status_message="OK", dont_print_status=True, error_status_message="An error has occurred in the main thread"):
+        super().__init__()
+        self.status_interval_seconds = status_interval_seconds
+        self.status_message = status_message
+        self.dont_print_status = dont_print_status
+        self.error_status_message = error_status_message
+        self.main_thread = threading.current_thread()
+        
+
+    def __status_writer(self):
+        while self.main_thread.is_alive():
+            self.log_success(title="STATUS", message=self.status_message, WriteToFileOnly=self.dont_print_status)
+            time.sleep(self.status_interval_seconds)
+        self.log_error(title="STATUS", message=self.error_status_message)
+        self.log_error(title="STATUS", message="StatusLogger has ended")
+
+    def start(self):
+        threading.Thread(target=self.__status_writer, daemon=False).start()
