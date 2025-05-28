@@ -8,7 +8,7 @@ def readme():
 
 setup(
   name='ilyxalogger',
-  version='1.4.0',
+  version='1.5.0',
   author='ILYXAAA',
   author_email='ilyagolybnichev@gmail.com',
   description='This is the simplest module for quick console log output.',
